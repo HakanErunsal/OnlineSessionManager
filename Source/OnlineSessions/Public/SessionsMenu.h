@@ -32,7 +32,7 @@ protected:
 
 	//Not Compatible with blueprints??
 	void OnFindSession(const TArray<FSessionSearchResult>& SearchResults, bool bWasSuccessful);
-	void OnJoinSession(EOnJoinSessionCompleteResult::Type Result);
+	void OnJoinSession(EOnJoinCompleteResult Result);
 
 	UFUNCTION()
 	void OnDestroySession(bool bWasSuccessful);

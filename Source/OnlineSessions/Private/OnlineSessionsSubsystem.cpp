@@ -5,6 +5,8 @@
 
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetStringLibrary.h"
 #include "Online/OnlineSessionNames.h"
 
 UOnlineSessionsSubsystem::UOnlineSessionsSubsystem():
@@ -45,9 +47,9 @@ void UOnlineSessionsSubsystem::CreateSession(int32 NumPublicConnections, FString
 	LastSessionSettings->bAllowJoinViaPresence = true;
 	LastSessionSettings->bShouldAdvertise = true;
 	LastSessionSettings->bUsesPresence = true;
+	LastSessionSettings->Set(FName("MatchType"), MatchType, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 	LastSessionSettings->bUseLobbiesIfAvailable = true;
 	LastSessionSettings->BuildUniqueId = 1;
-	LastSessionSettings->Set(FName("MatchType"), MatchType, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
 	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
 	if(!SessionInterface->CreateSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, *LastSessionSettings))
@@ -76,24 +78,26 @@ void UOnlineSessionsSubsystem::FindSession(int32 MaxSearchResults)
 	{
 		SessionInterface->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteDelegateHandle);
 
+		OnlineOnFindSessionsComplete.Broadcast(TArray<FSessionSearchResult>(), false);
 	}
 }
 
 void UOnlineSessionsSubsystem::JoinSession(const FOnlineSessionSearchResult& SessionResult)
 {
-	if(!SessionInterface.IsValid())
+	if (!SessionInterface.IsValid())
 	{
-		OnlineOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::UnknownError);
+		OnlineOnJoinSessionComplete.Broadcast(EOnJoinCompleteResult::UnknownError /*EOnJoinSessionCompleteResult::UnknownError*/);
 		return;
 	}
 
 	JoinSessionCompleteDelegateHandle = SessionInterface->AddOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegate);
+
 	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
-	if(!SessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, SessionResult))
+	if (!SessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, SessionResult))
 	{
 		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
 
-		OnlineOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::UnknownError);
+		OnlineOnJoinSessionComplete.Broadcast(EOnJoinCompleteResult::UnknownError /*EOnJoinSessionCompleteResult::UnknownError*/);
 	}
 }
 
@@ -121,14 +125,17 @@ void UOnlineSessionsSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 		SessionInterface->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteDelegateHandle);
 	}
 
-	if(LastSessionSearch->SearchResults.Num()<= 0)
-	{
-		OnlineOnFindSessionsComplete.Broadcast(TArray<FSessionSearchResult>(), false);
-	}
-
-    TArray<FSessionSearchResult> ConvertedSearchResults;
+	//Transform the Source class into plugin class
+	TArray<FSessionSearchResult> ConvertedSearchResults;
 	auto transformation = [](const FOnlineSessionSearchResult& SearchResult) { return FSessionSearchResult(SearchResult); };
 	Algo::Transform(LastSessionSearch->SearchResults, ConvertedSearchResults, transformation); 
+	
+	if(ConvertedSearchResults.Num()<= 0)
+	{
+		OnlineOnFindSessionsComplete.Broadcast(TArray<FSessionSearchResult>(), false);
+		return;
+	}
+	
 	OnlineOnFindSessionsComplete.Broadcast(ConvertedSearchResults, bWasSuccessful);
 }
 
@@ -138,8 +145,8 @@ void UOnlineSessionsSubsystem::OnJoinSessionComplete(FName SessionName, EOnJoinS
 	{
 		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
 	}
-
-	OnlineOnJoinSessionComplete.Broadcast(Result);
+	
+	OnlineOnJoinSessionComplete.Broadcast(static_cast<EOnJoinCompleteResult>(Result));
 }
 
 void UOnlineSessionsSubsystem::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
