@@ -18,6 +18,7 @@ struct FSessionSearchResult
 	GENERATED_BODY()
 
 	FOnlineSessionSearchResult SearchResult;
+	FSessionSearchResult();
 	FSessionSearchResult(const FOnlineSessionSearchResult& Result): SearchResult(Result) {}	
 };
 
@@ -69,7 +70,7 @@ class ONLINESESSIONS_API UOnlineSessionsSubsystem : public UGameInstanceSubsyste
 
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
 	void OnFindSessionsComplete(bool bWasSuccessful);
-	void OnJoinSessionComplete(FName SessionName,EOnlineJoinSessionCompleteResult Result);
+	void OnJoinSessionComplete(FName SessionName,EOnJoinSessionCompleteResult::Type Result);
 	void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
 	void OnStartSessionComplete(FName SessionName, bool bWasSuccessful);
 	

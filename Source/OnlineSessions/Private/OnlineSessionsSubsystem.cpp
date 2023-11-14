@@ -136,14 +136,14 @@ void UOnlineSessionsSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 	OnlineOnFindSessionsComplete.Broadcast(LastSessionSearch->SearchResults, bWasSuccessful);
 }
 
-void UOnlineSessionsSubsystem::OnJoinSessionComplete(FName SessionName,EOnlineJoinSessionCompleteResult Result)
+void UOnlineSessionsSubsystem::OnJoinSessionComplete(FName SessionName,EOnJoinSessionCompleteResult::Type Result)
 {
 	if(SessionInterface)
 	{
 		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
 	}
 	
-	OnlineOnJoinSessionComplete.Broadcast(Result);
+	OnlineOnJoinSessionComplete.Broadcast(static_cast<EOnlineJoinSessionCompleteResult>(Result));
 }
 
 void UOnlineSessionsSubsystem::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
