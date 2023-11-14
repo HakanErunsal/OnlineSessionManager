@@ -2,7 +2,6 @@
 
 
 #include "OnlineSessionsSubsystem.h"
-
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
 #include "Online/OnlineSessionNames.h"
