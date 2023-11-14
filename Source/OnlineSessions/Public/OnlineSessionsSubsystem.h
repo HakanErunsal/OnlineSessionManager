@@ -13,29 +13,9 @@
  *  Declaring own custom delegates for the Menu Class to bind callbacks to
  */
 
-USTRUCT(BlueprintType)
-struct FSessionSearchResult
-{
-	GENERATED_BODY()
-	FOnlineSessionSearchResult SearchResult;
-	FSessionSearchResult() {}
-	FSessionSearchResult(const FOnlineSessionSearchResult& Result) : SearchResult(Result) {}
-};
-
-UENUM(BlueprintType)
-	enum EOnJoinCompleteResult
-	{
-		Success,
-		SessionIsFull,
-		SessionDoesNotExist,
-		CouldNotRetrieveAddress,
-		AlreadyInSession,
-		UnknownError
-	};
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnlineOnCreateSessionComplete, bool, bWasSuccessful);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnlineOnFindSessionsComplete, const TArray<FSessionSearchResult>&, SearchResult, bool, bWasSuccessful);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnlineOnJoinSessionComplete, EOnJoinCompleteResult, Result);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnlineOnFindSessionsComplete, const TArray<FOnlineSessionSearchResult>& SearchResult, bool bWasSuccessful);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnlineOnJoinSessionComplete, EOnJoinSessionCompleteResult::Type Result);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnlineOnDestroySessionComplete, bool, bWasSuccessful);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnlineOnStartSessionComplete, bool, bWasSuccessful);
 
@@ -57,15 +37,10 @@ class ONLINESESSIONS_API UOnlineSessionsSubsystem : public UGameInstanceSubsyste
 	void StartSession();
 
 // Delegates for binding
-	UPROPERTY(BlueprintAssignable, Category = OnlineSubsystem)
 	FOnlineOnCreateSessionComplete OnlineOnCreateSessionComplete;
-	UPROPERTY(BlueprintAssignable, Category = OnlineSubsystem)
 	FOnlineOnFindSessionsComplete OnlineOnFindSessionsComplete;
-	UPROPERTY(BlueprintAssignable, Category = OnlineSubsystem)
 	FOnlineOnDestroySessionComplete OnlineOnDestroySessionComplete;
-	UPROPERTY(BlueprintAssignable, Category = OnlineSubsystem)
 	FOnlineOnStartSessionComplete OnlineOnStartSessionComplete;
-	UPROPERTY(BlueprintAssignable, Category = OnlineSubsystem)
 	FOnlineOnJoinSessionComplete OnlineOnJoinSessionComplete;
 	
 	protected:

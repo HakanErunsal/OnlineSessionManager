@@ -9,6 +9,8 @@
 #include "Kismet/KismetStringLibrary.h"
 #include "Online/OnlineSessionNames.h"
 
+
+
 UOnlineSessionsSubsystem::UOnlineSessionsSubsystem():
 	CreateSessionCompleteDelegate(FOnCreateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnCreateSessionComplete)),
 	FindSessionsCompleteDelegate(FOnFindSessionsCompleteDelegate::CreateUObject(this,&ThisClass::OnFindSessionsComplete)),
@@ -78,7 +80,7 @@ void UOnlineSessionsSubsystem::FindSession(int32 MaxSearchResults)
 	{
 		SessionInterface->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteDelegateHandle);
 
-		OnlineOnFindSessionsComplete.Broadcast(TArray<FSessionSearchResult>(), false);
+		OnlineOnFindSessionsComplete.Broadcast(TArray<FOnlineSessionSearchResult>(), false);
 	}
 }
 
@@ -86,7 +88,7 @@ void UOnlineSessionsSubsystem::JoinSession(const FOnlineSessionSearchResult& Ses
 {
 	if (!SessionInterface.IsValid())
 	{
-		OnlineOnJoinSessionComplete.Broadcast(EOnJoinCompleteResult::UnknownError /*EOnJoinSessionCompleteResult::UnknownError*/);
+		OnlineOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::UnknownError /*EOnJoinSessionCompleteResult::UnknownError*/);
 		return;
 	}
 
@@ -97,7 +99,7 @@ void UOnlineSessionsSubsystem::JoinSession(const FOnlineSessionSearchResult& Ses
 	{
 		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
 
-		OnlineOnJoinSessionComplete.Broadcast(EOnJoinCompleteResult::UnknownError /*EOnJoinSessionCompleteResult::UnknownError*/);
+		OnlineOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::UnknownError /*EOnJoinSessionCompleteResult::UnknownError*/);
 	}
 }
 
@@ -126,17 +128,17 @@ void UOnlineSessionsSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 	}
 
 	//Transform the Source class into plugin class
-	TArray<FSessionSearchResult> ConvertedSearchResults;
-	auto transformation = [](const FOnlineSessionSearchResult& SearchResult) { return FSessionSearchResult(SearchResult); };
-	Algo::Transform(LastSessionSearch->SearchResults, ConvertedSearchResults, transformation); 
+	// TArray<FSessionSearchResult> ConvertedSearchResults;
+	// auto transformation = [](const FOnlineSessionSearchResult& SearchResult) { return FSessionSearchResult(SearchResult); };
+	// Algo::Transform(LastSessionSearch->SearchResults, ConvertedSearchResults, transformation); 
 	
-	if(ConvertedSearchResults.Num()<= 0)
+	if(LastSessionSearch->SearchResults.Num()<= 0)
 	{
-		OnlineOnFindSessionsComplete.Broadcast(TArray<FSessionSearchResult>(), false);
+		OnlineOnFindSessionsComplete.Broadcast(TArray<FOnlineSessionSearchResult>(), false);
 		return;
 	}
 	
-	OnlineOnFindSessionsComplete.Broadcast(ConvertedSearchResults, bWasSuccessful);
+	OnlineOnFindSessionsComplete.Broadcast(LastSessionSearch->SearchResults, bWasSuccessful);
 }
 
 void UOnlineSessionsSubsystem::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
@@ -146,7 +148,7 @@ void UOnlineSessionsSubsystem::OnJoinSessionComplete(FName SessionName, EOnJoinS
 		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
 	}
 	
-	OnlineOnJoinSessionComplete.Broadcast(static_cast<EOnJoinCompleteResult>(Result));
+	OnlineOnJoinSessionComplete.Broadcast(Result);
 }
 
 void UOnlineSessionsSubsystem::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)

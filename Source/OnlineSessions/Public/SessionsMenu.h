@@ -31,8 +31,8 @@ protected:
 	void OnCreateSession(bool bWasSuccessful);
 
 	//Not Compatible with blueprints??
-	void OnFindSession(const TArray<FSessionSearchResult>& SearchResults, bool bWasSuccessful);
-	void OnJoinSession(EOnJoinCompleteResult Result);
+	void OnFindSession(const TArray<FOnlineSessionSearchResult>& SearchResults, bool bWasSuccessful);
+	void OnJoinSession(EOnJoinSessionCompleteResult::Type Result);
 
 	UFUNCTION()
 	void OnDestroySession(bool bWasSuccessful);
