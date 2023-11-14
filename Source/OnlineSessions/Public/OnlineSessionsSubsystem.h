@@ -18,8 +18,8 @@ struct FSessionSearchResult
 	GENERATED_BODY()
 
 	FOnlineSessionSearchResult SearchResult;
-	FSessionSearchResult();
-	FSessionSearchResult(const FOnlineSessionSearchResult& Result): SearchResult(Result) {}	
+	FSessionSearchResult() {}
+	FSessionSearchResult(const FOnlineSessionSearchResult& Result): SearchResult(Result) {}
 };
 
 UENUM(BlueprintType, Category = "Online Sessions")

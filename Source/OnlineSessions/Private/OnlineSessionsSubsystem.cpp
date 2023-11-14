@@ -4,6 +4,7 @@
 #include "OnlineSessionsSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
+#include "Kismet/KismetStringLibrary.h"
 #include "Online/OnlineSessionNames.h"
 
 UOnlineSessionsSubsystem::UOnlineSessionsSubsystem():
@@ -138,11 +139,20 @@ void UOnlineSessionsSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 
 void UOnlineSessionsSubsystem::OnJoinSessionComplete(FName SessionName,EOnJoinSessionCompleteResult::Type Result)
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			15.f,
+			FColor::Red,
+			FString::Printf(TEXT("On Join Session Result: %s"),*UEnum::GetValueAsString(static_cast<EOnlineJoinSessionCompleteResult>(Result)))
+			);
+	}
+
 	if(SessionInterface)
 	{
 		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
 	}
-	
 	OnlineOnJoinSessionComplete.Broadcast(static_cast<EOnlineJoinSessionCompleteResult>(Result));
 }
 

@@ -86,16 +86,6 @@ void USessionsMenu::OnCreateSession(bool bWasSuccessful)
 
 void USessionsMenu::OnFindSession(const TArray<FOnlineSessionSearchResult>& SearchResults, bool bWasSuccessful)
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			-1,
-			15.f,
-			FColor::Red,
-			FString::Printf(TEXT("Find session completed with: %s"), *UKismetStringLibrary::Conv_BoolToString(bWasSuccessful))
-			);
-	}
-	
 	if(OnlineSessionsSubsystem == nullptr)
 	{
 		return;
