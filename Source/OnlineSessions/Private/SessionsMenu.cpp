@@ -39,7 +39,7 @@ void USessionsMenu::SetupMenu(int32 NumberOfPublicConnections, FString TypeOfMat
 	{
 		OnlineSessionsSubsystem->OnlineOnCreateSessionComplete.AddDynamic(this, &ThisClass::OnCreateSession);
 		OnlineSessionsSubsystem->OnlineOnFindSessionsComplete.AddUObject(this, &ThisClass::OnFindSession);
-		OnlineSessionsSubsystem->OnlineOnJoinSessionComplete.AddUObject(this, &ThisClass::OnJoinSession);
+		OnlineSessionsSubsystem->OnlineOnJoinSessionComplete.AddDynamic(this, &ThisClass::OnJoinSession);
 		OnlineSessionsSubsystem->OnlineOnDestroySessionComplete.AddDynamic(this, &ThisClass::OnDestroySession);	
 		OnlineSessionsSubsystem->OnlineOnStartSessionComplete.AddDynamic(this, &ThisClass::OnStartSession);
 	}
@@ -134,7 +134,7 @@ void USessionsMenu::OnFindSession(const TArray<FOnlineSessionSearchResult>& Sear
 	}
 }
 
-void USessionsMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
+void USessionsMenu::OnJoinSession(EOnlineJoinSessionCompleteResult Result)
 {
 	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
 	if (Subsystem)

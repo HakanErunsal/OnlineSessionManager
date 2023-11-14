@@ -5,10 +5,29 @@
 
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Online/OnlineSessionNames.h"
 
+
+USTRUCT(BlueprintType, Category = "Online Sessions")
+struct FSessionSearchResult
+{
+	GENERATED_BODY()
+
+	FOnlineSessionSearchResult Result;
+	FSessionSearchResult(const FOnlineSessionSearchResult& SearchResult): Result(SearchResult) {}	
+};
+
+UENUM(BlueprintType, Category = "Online Sessions")
+enum class EOnlineJoinSessionCompleteResult
+{
+	Success,
+	SessionIsFull,
+	SessionDoesNotExist,
+	CouldNotRetrieveAddress,
+	AlreadyInSession,
+	UnknownError
+};
 
 
 UOnlineSessionsSubsystem::UOnlineSessionsSubsystem():
@@ -88,7 +107,7 @@ void UOnlineSessionsSubsystem::JoinSession(const FOnlineSessionSearchResult& Ses
 {
 	if (!SessionInterface.IsValid())
 	{
-		OnlineOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::UnknownError /*EOnJoinSessionCompleteResult::UnknownError*/);
+		OnlineOnJoinSessionComplete.Broadcast(EOnlineJoinSessionCompleteResult::UnknownError);
 		return;
 	}
 
@@ -99,7 +118,7 @@ void UOnlineSessionsSubsystem::JoinSession(const FOnlineSessionSearchResult& Ses
 	{
 		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
 
-		OnlineOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::UnknownError /*EOnJoinSessionCompleteResult::UnknownError*/);
+		OnlineOnJoinSessionComplete.Broadcast(EOnlineJoinSessionCompleteResult::UnknownError);
 	}
 }
 
@@ -141,7 +160,7 @@ void UOnlineSessionsSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 	OnlineOnFindSessionsComplete.Broadcast(LastSessionSearch->SearchResults, bWasSuccessful);
 }
 
-void UOnlineSessionsSubsystem::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
+void UOnlineSessionsSubsystem::OnJoinSessionComplete(FName SessionName,EOnlineJoinSessionCompleteResult Result)
 {
 	if(SessionInterface)
 	{
