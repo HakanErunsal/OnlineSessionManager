@@ -12,6 +12,25 @@
 /**
  *  Declaring own custom delegates for the Menu Class to bind callbacks to
  */
+USTRUCT(BlueprintType, Category = "Online Sessions")
+struct FSessionSearchResult
+{
+	GENERATED_BODY()
+
+	FOnlineSessionSearchResult Result;
+	FSessionSearchResult(const FOnlineSessionSearchResult& SearchResult): Result(SearchResult) {}	
+};
+
+UENUM(BlueprintType, Category = "Online Sessions")
+enum class EOnlineJoinSessionCompleteResult
+{
+	Success,
+	SessionIsFull,
+	SessionDoesNotExist,
+	CouldNotRetrieveAddress,
+	AlreadyInSession,
+	UnknownError
+};
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnlineOnCreateSessionComplete, bool, bWasSuccessful);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnlineOnFindSessionsComplete, const TArray<FOnlineSessionSearchResult>& SearchResult, bool bWasSuccessful);

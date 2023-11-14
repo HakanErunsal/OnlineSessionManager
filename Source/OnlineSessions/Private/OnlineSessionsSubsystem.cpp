@@ -5,30 +5,7 @@
 
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
-#include "Kismet/KismetStringLibrary.h"
 #include "Online/OnlineSessionNames.h"
-
-
-USTRUCT(BlueprintType, Category = "Online Sessions")
-struct FSessionSearchResult
-{
-	GENERATED_BODY()
-
-	FOnlineSessionSearchResult Result;
-	FSessionSearchResult(const FOnlineSessionSearchResult& SearchResult): Result(SearchResult) {}	
-};
-
-UENUM(BlueprintType, Category = "Online Sessions")
-enum class EOnlineJoinSessionCompleteResult
-{
-	Success,
-	SessionIsFull,
-	SessionDoesNotExist,
-	CouldNotRetrieveAddress,
-	AlreadyInSession,
-	UnknownError
-};
-
 
 UOnlineSessionsSubsystem::UOnlineSessionsSubsystem():
 	CreateSessionCompleteDelegate(FOnCreateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnCreateSessionComplete)),
