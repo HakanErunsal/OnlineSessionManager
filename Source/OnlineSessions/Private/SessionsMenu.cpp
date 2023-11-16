@@ -5,7 +5,6 @@
 #include "OnlineSessionSettings.h"
 #include "OnlineSessionsSubsystem.h"
 #include "Components/Button.h"
-#include "Kismet/KismetStringLibrary.h"
 
 void USessionsMenu::SetupMenu(int32 NumberOfPublicConnections, FString TypeOfMatch)
 {
@@ -38,7 +37,7 @@ void USessionsMenu::SetupMenu(int32 NumberOfPublicConnections, FString TypeOfMat
 	if (OnlineSessionsSubsystem)
 	{
 		OnlineSessionsSubsystem->OnlineOnCreateSessionComplete.AddDynamic(this, &ThisClass::OnCreateSession);
-		OnlineSessionsSubsystem->OnlineOnFindSessionsComplete.AddUObject(this, &ThisClass::OnFindSession);
+		OnlineSessionsSubsystem->OnlineOnFindSessionsComplete.AddDynamic(this, &ThisClass::OnFindSessions);
 		OnlineSessionsSubsystem->OnlineOnJoinSessionComplete.AddDynamic(this, &ThisClass::OnJoinSession);
 		OnlineSessionsSubsystem->OnlineOnDestroySessionComplete.AddDynamic(this, &ThisClass::OnDestroySession);	
 		OnlineSessionsSubsystem->OnlineOnStartSessionComplete.AddDynamic(this, &ThisClass::OnStartSession);
@@ -84,27 +83,17 @@ void USessionsMenu::OnCreateSession(bool bWasSuccessful)
 	}
 }
 
-void USessionsMenu::OnFindSession(const TArray<FOnlineSessionSearchResult>& SearchResults, bool bWasSuccessful)
+void USessionsMenu::OnFindSessions(TArray<FSessionSearchResult>& SearchResults, bool bWasSuccessful)
 {
 	if(OnlineSessionsSubsystem == nullptr)
 	{
 		return;
 	}
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			-1,
-			15.f,
-			FColor::Red,
-			FString::Printf(TEXT("Number of found sessions: %d"), SearchResults.Num())
-			);
-	}
-
 	for (auto Result : SearchResults)
 	{
 		FString SettingsValue;
-		Result.Session.SessionSettings.Get(FName("MatchType"), SettingsValue);
+		Result.SearchResult.Session.SessionSettings.Get(FName("MatchType"), SettingsValue);
 
 		if (GEngine)
 		{
@@ -112,7 +101,8 @@ void USessionsMenu::OnFindSession(const TArray<FOnlineSessionSearchResult>& Sear
 				-1,
 				15.f,
 				FColor::Red,
-				FString::Printf(TEXT("Found session - Owner Name: %s - Match Type: %s"), *Result.Session.OwningUserName, *SettingsValue)
+				FString::Printf(TEXT("Found session - Owner Name: %s - Match Type: %s"),
+					*Result.SearchResult.Session.OwningUserName, *SettingsValue)
 				);
 		}
 		
@@ -135,7 +125,7 @@ void USessionsMenu::OnJoinSession(EOnlineJoinSessionCompleteResult Result)
 			FString Address;
 			SessionInterface->GetResolvedConnectString(NAME_GameSession, Address);
 			
-			/*if (GEngine)
+			if (GEngine)
 			{
 				GEngine->AddOnScreenDebugMessage(
 					-1,
@@ -143,7 +133,7 @@ void USessionsMenu::OnJoinSession(EOnlineJoinSessionCompleteResult Result)
 					FColor::Green,
 					FString::Printf(TEXT("Address: %s"), *Address)
 					);
-			}*/
+			}
 			
 			APlayerController* PlayerController = GetGameInstance()->GetFirstLocalPlayerController();
 			if (PlayerController)
@@ -174,7 +164,7 @@ void USessionsMenu::JoinButtonClick()
 {
 	if(OnlineSessionsSubsystem)
 	{
-		OnlineSessionsSubsystem->FindSession(1000);
+		OnlineSessionsSubsystem->FindSessions(1000);
 	}
 }
 

@@ -4,7 +4,6 @@
 #include "OnlineSessionsSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
-#include "Kismet/KismetStringLibrary.h"
 #include "Online/OnlineSessionNames.h"
 
 UOnlineSessionsSubsystem::UOnlineSessionsSubsystem():
@@ -57,7 +56,7 @@ void UOnlineSessionsSubsystem::CreateSession(int32 NumPublicConnections, FString
 	}
 }
 
-void UOnlineSessionsSubsystem::FindSession(int32 MaxSearchResults)
+void UOnlineSessionsSubsystem::FindSessions(int32 MaxSearchResults)
 {
 	if(!SessionInterface.IsValid())
 	{
@@ -76,7 +75,8 @@ void UOnlineSessionsSubsystem::FindSession(int32 MaxSearchResults)
 	{
 		SessionInterface->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteDelegateHandle);
 
-		OnlineOnFindSessionsComplete.Broadcast(TArray<FSessionSearchResult>(), false);
+		TArray<FSessionSearchResult> EmptyResult;
+		OnlineOnFindSessionsComplete.Broadcast(EmptyResult, false);
 	}
 }
 
@@ -127,18 +127,48 @@ void UOnlineSessionsSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 	// TArray<FSessionSearchResult> ConvertedSearchResults;
 	// auto transformation = [](const FOnlineSessionSearchResult& SearchResult) { return FSessionSearchResult(SearchResult); };
 	// Algo::Transform(LastSessionSearch->SearchResults, ConvertedSearchResults, transformation); 
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			15.f,
+			FColor::Green,
+			FString::Printf(TEXT("Num of found sessions: %d First Owner ID: %s"), LastSessionSearch->SearchResults.Num(), *LastSessionSearch->SearchResults[0].Session.OwningUserName)
+			);
+	}
+	
+	TArray<FSessionSearchResult> ConvertedSearchResults;
+	Algo::Transform(
+				LastSessionSearch->SearchResults,ConvertedSearchResults,[] (const FOnlineSessionSearchResult& SearchResult)
+				{
+					return FSessionSearchResult(SearchResult);
+				}
+				);
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			15.f,
+			FColor::Green,
+			FString::Printf(TEXT("Converted found sessions: %d First Owner ID: %s"),
+				ConvertedSearchResults.Num(),
+				*ConvertedSearchResults[0].SearchResult.Session.OwningUserName)
+			);
+	}
 	
 	if(LastSessionSearch->SearchResults.Num()<= 0)
 	{
-		OnlineOnFindSessionsComplete.Broadcast(TArray<FSessionSearchResult>(), false);
+		TArray<FSessionSearchResult> EmptyResult;
+		OnlineOnFindSessionsComplete.Broadcast(EmptyResult, false);
 		return;
 	}
 	
-	OnlineOnFindSessionsComplete.Broadcast(
-		Algo::Transform(FOnlineSessionSearchResult, FSessionSearchResult, [] transform() { return })	LastSessionSearch->SearchResults, bWasSuccessful);
+	OnlineOnFindSessionsComplete.Broadcast(ConvertedSearchResults, bWasSuccessful);
 }
 
-void UOnlineSessionsSubsystem::OnJoinSessionComplete(FName SessionName,EOnJoinSessionCompleteResult::Type Result)
+void UOnlineSessionsSubsystem::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
 	if (GEngine)
 	{

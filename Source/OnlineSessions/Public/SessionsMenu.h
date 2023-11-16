@@ -30,14 +30,15 @@ protected:
 	UFUNCTION()
 	void OnCreateSession(bool bWasSuccessful);
 
-	//Not Compatible with blueprints??
-	void OnFindSession(const TArray<FOnlineSessionSearchResult>& SearchResults, bool bWasSuccessful);
+	UFUNCTION()
+	void OnFindSessions(TArray<FSessionSearchResult>& SearchResults, bool bWasSuccessful);
 
 	UFUNCTION()
 	void OnJoinSession(EOnlineJoinSessionCompleteResult Result);
 
 	UFUNCTION()
 	void OnDestroySession(bool bWasSuccessful);
+	
 	UFUNCTION()
 	void OnStartSession(bool bWasSuccessful);
 
