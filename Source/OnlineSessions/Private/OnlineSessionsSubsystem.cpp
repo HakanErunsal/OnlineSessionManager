@@ -76,11 +76,11 @@ void UOnlineSessionsSubsystem::FindSession(int32 MaxSearchResults)
 	{
 		SessionInterface->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteDelegateHandle);
 
-		OnlineOnFindSessionsComplete.Broadcast(TArray<FOnlineSessionSearchResult>(), false);
+		OnlineOnFindSessionsComplete.Broadcast(TArray<FSessionSearchResult>(), false);
 	}
 }
 
-void UOnlineSessionsSubsystem::JoinSession(const FOnlineSessionSearchResult& SessionResult)
+void UOnlineSessionsSubsystem::JoinSession(const FSessionSearchResult& SessionResult)
 {
 	if (!SessionInterface.IsValid())
 	{
@@ -91,7 +91,7 @@ void UOnlineSessionsSubsystem::JoinSession(const FOnlineSessionSearchResult& Ses
 	JoinSessionCompleteDelegateHandle = SessionInterface->AddOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegate);
 
 	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
-	if (!SessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, SessionResult))
+	if (!SessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, SessionResult.SearchResult))
 	{
 		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
 
@@ -130,11 +130,12 @@ void UOnlineSessionsSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 	
 	if(LastSessionSearch->SearchResults.Num()<= 0)
 	{
-		OnlineOnFindSessionsComplete.Broadcast(TArray<FOnlineSessionSearchResult>(), false);
+		OnlineOnFindSessionsComplete.Broadcast(TArray<FSessionSearchResult>(), false);
 		return;
 	}
 	
-	OnlineOnFindSessionsComplete.Broadcast(LastSessionSearch->SearchResults, bWasSuccessful);
+	OnlineOnFindSessionsComplete.Broadcast(
+		Algo::Transform(FOnlineSessionSearchResult, FSessionSearchResult, [] transform() { return })	LastSessionSearch->SearchResults, bWasSuccessful);
 }
 
 void UOnlineSessionsSubsystem::OnJoinSessionComplete(FName SessionName,EOnJoinSessionCompleteResult::Type Result)
