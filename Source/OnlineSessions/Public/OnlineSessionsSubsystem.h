@@ -34,7 +34,7 @@ enum class EOnlineJoinSessionCompleteResult
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnlineOnCreateSessionComplete, bool, bWasSuccessful);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnlineOnFindSessionsComplete, TArray<FSessionSearchResult>&, SearchResult, bool, bWasSuccessful);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnlineOnFindSessionsComplete, const TArray<FSessionSearchResult>&, SearchResult, bool, bWasSuccessful);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnlineOnJoinSessionComplete, EOnlineJoinSessionCompleteResult, Result);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnlineOnDestroySessionComplete, bool, bWasSuccessful);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnlineOnStartSessionComplete, bool, bWasSuccessful);
@@ -57,10 +57,15 @@ class ONLINESESSIONS_API UOnlineSessionsSubsystem : public UGameInstanceSubsyste
 	void StartSession();
 
 // Delegates for binding
+	UPROPERTY(BlueprintAssignable, Category = "Online Session")
 	FOnlineOnCreateSessionComplete OnlineOnCreateSessionComplete;
+	UPROPERTY(BlueprintAssignable, Category = "Online Session")
 	FOnlineOnFindSessionsComplete OnlineOnFindSessionsComplete;
+	UPROPERTY(BlueprintAssignable, Category = "Online Session")
 	FOnlineOnDestroySessionComplete OnlineOnDestroySessionComplete;
+	UPROPERTY(BlueprintAssignable, Category = "Online Session")
 	FOnlineOnStartSessionComplete OnlineOnStartSessionComplete;
+	UPROPERTY(BlueprintAssignable, Category = "Online Session")
 	FOnlineOnJoinSessionComplete OnlineOnJoinSessionComplete;
 	
 	protected:

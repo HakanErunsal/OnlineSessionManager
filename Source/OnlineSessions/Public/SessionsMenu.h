@@ -31,7 +31,7 @@ protected:
 	void OnCreateSession(bool bWasSuccessful);
 
 	UFUNCTION()
-	void OnFindSessions(TArray<FSessionSearchResult>& SearchResults, bool bWasSuccessful);
+	void OnFindSessions(const TArray<FSessionSearchResult>& SearchResults, bool bWasSuccessful);
 
 	UFUNCTION()
 	void OnJoinSession(EOnlineJoinSessionCompleteResult Result);

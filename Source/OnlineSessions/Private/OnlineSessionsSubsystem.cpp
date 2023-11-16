@@ -75,8 +75,7 @@ void UOnlineSessionsSubsystem::FindSessions(int32 MaxSearchResults)
 	{
 		SessionInterface->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteDelegateHandle);
 
-		TArray<FSessionSearchResult> EmptyResult;
-		OnlineOnFindSessionsComplete.Broadcast(EmptyResult, false);
+		OnlineOnFindSessionsComplete.Broadcast(TArray<FSessionSearchResult>(), false);
 	}
 }
 
@@ -123,21 +122,6 @@ void UOnlineSessionsSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 		SessionInterface->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteDelegateHandle);
 	}
 
-	//Transform the Source class into plugin class
-	// TArray<FSessionSearchResult> ConvertedSearchResults;
-	// auto transformation = [](const FOnlineSessionSearchResult& SearchResult) { return FSessionSearchResult(SearchResult); };
-	// Algo::Transform(LastSessionSearch->SearchResults, ConvertedSearchResults, transformation); 
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			-1,
-			15.f,
-			FColor::Green,
-			FString::Printf(TEXT("Num of found sessions: %d First Owner ID: %s"), LastSessionSearch->SearchResults.Num(), *LastSessionSearch->SearchResults[0].Session.OwningUserName)
-			);
-	}
-	
 	TArray<FSessionSearchResult> ConvertedSearchResults;
 	Algo::Transform(
 				LastSessionSearch->SearchResults,ConvertedSearchResults,[] (const FOnlineSessionSearchResult& SearchResult)
@@ -145,23 +129,10 @@ void UOnlineSessionsSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 					return FSessionSearchResult(SearchResult);
 				}
 				);
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			-1,
-			15.f,
-			FColor::Green,
-			FString::Printf(TEXT("Converted found sessions: %d First Owner ID: %s"),
-				ConvertedSearchResults.Num(),
-				*ConvertedSearchResults[0].SearchResult.Session.OwningUserName)
-			);
-	}
 	
-	if(LastSessionSearch->SearchResults.Num()<= 0)
+	if(ConvertedSearchResults.Num()<= 0)
 	{
-		TArray<FSessionSearchResult> EmptyResult;
-		OnlineOnFindSessionsComplete.Broadcast(EmptyResult, false);
+		OnlineOnFindSessionsComplete.Broadcast(TArray<FSessionSearchResult>(), false);
 		return;
 	}
 	
@@ -170,16 +141,6 @@ void UOnlineSessionsSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 
 void UOnlineSessionsSubsystem::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			-1,
-			15.f,
-			FColor::Red,
-			FString::Printf(TEXT("On Join Session Result: %s"),*UEnum::GetValueAsString(static_cast<EOnlineJoinSessionCompleteResult>(Result)))
-			);
-	}
-
 	if(SessionInterface)
 	{
 		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);

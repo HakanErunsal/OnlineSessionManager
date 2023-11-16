@@ -83,7 +83,7 @@ void USessionsMenu::OnCreateSession(bool bWasSuccessful)
 	}
 }
 
-void USessionsMenu::OnFindSessions(TArray<FSessionSearchResult>& SearchResults, bool bWasSuccessful)
+void USessionsMenu::OnFindSessions(const TArray<FSessionSearchResult>& SearchResults, bool bWasSuccessful)
 {
 	if(OnlineSessionsSubsystem == nullptr)
 	{
@@ -94,17 +94,6 @@ void USessionsMenu::OnFindSessions(TArray<FSessionSearchResult>& SearchResults, 
 	{
 		FString SettingsValue;
 		Result.SearchResult.Session.SessionSettings.Get(FName("MatchType"), SettingsValue);
-
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(
-				-1,
-				15.f,
-				FColor::Red,
-				FString::Printf(TEXT("Found session - Owner Name: %s - Match Type: %s"),
-					*Result.SearchResult.Session.OwningUserName, *SettingsValue)
-				);
-		}
 		
 		if(SettingsValue == MatchType)
 		{
@@ -124,16 +113,6 @@ void USessionsMenu::OnJoinSession(EOnlineJoinSessionCompleteResult Result)
 		{
 			FString Address;
 			SessionInterface->GetResolvedConnectString(NAME_GameSession, Address);
-			
-			if (GEngine)
-			{
-				GEngine->AddOnScreenDebugMessage(
-					-1,
-					15.f,
-					FColor::Green,
-					FString::Printf(TEXT("Address: %s"), *Address)
-					);
-			}
 			
 			APlayerController* PlayerController = GetGameInstance()->GetFirstLocalPlayerController();
 			if (PlayerController)
