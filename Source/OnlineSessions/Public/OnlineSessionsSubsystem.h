@@ -9,19 +9,6 @@
 
 #include "OnlineSessionsSubsystem.generated.h"
 
-/**
- *  Declaring own custom delegates for the Menu Class to bind callbacks to
- */
-USTRUCT(BlueprintType, Category = "Online Sessions")
-struct FSessionSearchResult
-{
-	GENERATED_BODY()
-
-	FOnlineSessionSearchResult SearchResult;
-	FSessionSearchResult() {}
-	FSessionSearchResult(const FOnlineSessionSearchResult& Result): SearchResult(Result) {}
-};
-
 UENUM(BlueprintType, Category = "Online Sessions")
 enum class EOnlineJoinSessionCompleteResult
 {

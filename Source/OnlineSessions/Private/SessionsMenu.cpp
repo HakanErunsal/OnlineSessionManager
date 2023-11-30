@@ -4,6 +4,7 @@
 #include "SessionsMenu.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSessionsSubsystem.h"
+#include "SessionSearchResult.h"
 #include "Components/Button.h"
 
 void USessionsMenu::SetupMenu(int32 NumberOfPublicConnections, FString TypeOfMatch)

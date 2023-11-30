@@ -4,6 +4,7 @@
 #include "OnlineSessionsSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
+#include "SessionSearchResult.h"
 #include "Online/OnlineSessionNames.h"
 
 UOnlineSessionsSubsystem::UOnlineSessionsSubsystem():

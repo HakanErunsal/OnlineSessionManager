@@ -2,28 +2,31 @@
 
 #include "CoreMinimal.h"
 #include "OnlineSessionSettings.h"
+#include "SessionSearchResult.generated.h"
 
 	USTRUCT(BlueprintType)
-	struct FNewSessionSearchResult
+	struct FSessionSearchResult
 	{
 		GENERATED_BODY()
 
 	public:
-		UPROPERTY(EditAnywhere)
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FString OwningUserName = "Invalid";
-		UPROPERTY(EditAnywhere)
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FString SessionName = "Invalid";
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 NumOpenPrivateConnections = 0;
-		UPROPERTY(EditAnywhere)
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 NumOpenPublicConnections = 0;
-		UPROPERTY(EditAnywhere)
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 PingInMs = 0;
-		UPROPERTY(EditAnywhere)
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsValid = false;
 		
 		FOnlineSessionSearchResult SearchResult;
 	
-		FNewSessionSearchResult(){}
-		FNewSessionSearchResult(const FOnlineSessionSearchResult& Result):
+		FSessionSearchResult(){}
+		FSessionSearchResult(const FOnlineSessionSearchResult& Result):
 			OwningUserName(Result.Session.OwningUserName),
 			NumOpenPrivateConnections(Result.Session.NumOpenPrivateConnections),
 			NumOpenPublicConnections(Result.Session.NumOpenPublicConnections),
