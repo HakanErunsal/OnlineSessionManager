@@ -55,11 +55,14 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* Button_Join;
 
-	UFUNCTION()
+	UPROPERTY(meta = (BindWidget))
+	UButton* Button_Find;
+
+	/*UFUNCTION()
 	void HostButtonClick();
 	
 	UFUNCTION()
-	void JoinButtonClick();
+	void JoinButtonClick();*/
 
 	void MenuTearDown();
 };

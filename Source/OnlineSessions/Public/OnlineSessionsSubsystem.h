@@ -37,10 +37,15 @@ class ONLINESESSIONS_API UOnlineSessionsSubsystem : public UGameInstanceSubsyste
 //
 // To handle session functionality. The Menu class will call these
 //
+	UFUNCTION(BlueprintCallable)
 	void CreateSession(int32 NumPublicConnections, FString MatchType);
+	UFUNCTION(BlueprintCallable)
 	void FindSessions(int32 MaxSearchResults);
+	UFUNCTION(BlueprintCallable)
 	void JoinSession(const FSessionSearchResult& SessionResult);
+	UFUNCTION(BlueprintCallable)
 	void DestroySession();
+	UFUNCTION(BlueprintCallable)
 	void StartSession();
 
 // Delegates for binding
@@ -54,7 +59,7 @@ class ONLINESESSIONS_API UOnlineSessionsSubsystem : public UGameInstanceSubsyste
 	FOnlineOnStartSessionComplete OnlineOnStartSessionComplete;
 	UPROPERTY(BlueprintAssignable, Category = "Online Session")
 	FOnlineOnJoinSessionComplete OnlineOnJoinSessionComplete;
-	
+
 	protected:
 
 // Internal callbacks for the delegates will be added to the Online Session Interface delegate list

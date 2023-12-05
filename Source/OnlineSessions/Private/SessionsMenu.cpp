@@ -52,15 +52,15 @@ bool USessionsMenu::Initialize()
 		return false;
 	}
 
-	if(Button_Host)
-	{
-		Button_Host->OnClicked.AddDynamic(this, &USessionsMenu::HostButtonClick);
-	}
+	//if(Button_Host)
+	//{
+	//	Button_Host->OnClicked.AddDynamic(this, &USessionsMenu::HostButtonClick);
+	//}
 
-	if(Button_Join)
-	{
-		Button_Join->OnClicked.AddDynamic(this, &USessionsMenu::JoinButtonClick);
-	}
+	//if(Button_Join)
+	//{
+	//	Button_Join->OnClicked.AddDynamic(this, &USessionsMenu::JoinButtonClick);
+	//}
 	
 	return true;
 }
@@ -98,7 +98,7 @@ void USessionsMenu::OnFindSessions(const TArray<FSessionSearchResult>& SearchRes
 		
 		if(SettingsValue == MatchType)
 		{
-			OnlineSessionsSubsystem->JoinSession(Result);
+			//OnlineSessionsSubsystem->JoinSession(Result);
 			return;
 		}
 	}
@@ -132,21 +132,21 @@ void USessionsMenu::OnStartSession(bool bWasSuccessful)
 {
 }
 
-void USessionsMenu::HostButtonClick()
-{
-	if(OnlineSessionsSubsystem)
-	{
-		OnlineSessionsSubsystem->CreateSession(NumPublicConnections, MatchType);
-	}
-}
-
-void USessionsMenu::JoinButtonClick()
-{
-	if(OnlineSessionsSubsystem)
-	{
-		OnlineSessionsSubsystem->FindSessions(1000);
-	}
-}
+//void USessionsMenu::HostButtonClick()
+//{
+//	if(OnlineSessionsSubsystem)
+//	{
+//		OnlineSessionsSubsystem->CreateSession(NumPublicConnections, MatchType);
+//	}
+//}
+//
+//void USessionsMenu::JoinButtonClick()
+//{
+//	if(OnlineSessionsSubsystem)
+//	{
+//		OnlineSessionsSubsystem->FindSessions(1000);
+//	}
+//}
 
 void USessionsMenu::MenuTearDown()
 {
