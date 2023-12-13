@@ -10,7 +10,7 @@
 #include "OnlineSessionsSubsystem.generated.h"
 
 UENUM(BlueprintType, Category = "Online Sessions")
-enum class EOnlineJoinSessionCompleteResult
+enum class EOnlineJoinSessionCompleteResult : uint8
 {
 	Success,
 	SessionIsFull,
@@ -47,6 +47,8 @@ class ONLINESESSIONS_API UOnlineSessionsSubsystem : public UGameInstanceSubsyste
 	void DestroySession();
 	UFUNCTION(BlueprintCallable)
 	void StartSession();
+	UFUNCTION(BlueprintCallable)
+	TArray<FSessionSearchResult> GetLastSessionSearchResult();
 
 // Delegates for binding
 	UPROPERTY(BlueprintAssignable, Category = "Online Session")

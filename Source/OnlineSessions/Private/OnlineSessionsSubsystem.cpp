@@ -107,6 +107,22 @@ void UOnlineSessionsSubsystem::StartSession()
 {
 }
 
+TArray<FSessionSearchResult> UOnlineSessionsSubsystem::GetLastSessionSearchResult()
+{
+	if (SessionInterface && LastSessionSearch && LastSessionSearch->SearchResults.Num() > 0)
+	{
+		TArray<FSessionSearchResult> ConvertedSearchResults;
+		Algo::Transform(LastSessionSearch->SearchResults, ConvertedSearchResults, [](const FOnlineSessionSearchResult& SearchResult)
+			{
+				return FSessionSearchResult(SearchResult);
+			}
+		);
+		return ConvertedSearchResults;
+	}
+
+	return TArray<FSessionSearchResult>();
+}
+
 void UOnlineSessionsSubsystem::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
 {
 	if(SessionInterface)

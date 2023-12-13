@@ -27,19 +27,19 @@ protected:
 	//
 	// Callbacks for the custom delegates on the MultiplayerSessionsSubsystem
 	//
-	UFUNCTION()
+	UFUNCTION(BlueprintNativeEvent)
 	void OnCreateSession(bool bWasSuccessful);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintNativeEvent)
 	void OnFindSessions(const TArray<FSessionSearchResult>& SearchResults, bool bWasSuccessful);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintNativeEvent)
 	void OnJoinSession(EOnlineJoinSessionCompleteResult Result);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintNativeEvent)
 	void OnDestroySession(bool bWasSuccessful);
 	
-	UFUNCTION()
+	UFUNCTION(BlueprintNativeEvent)
 	void OnStartSession(bool bWasSuccessful);
 
 private:
@@ -58,7 +58,8 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* Button_Find;
 
-	/*UFUNCTION()
+	/* Button click functions example
+	UFUNCTION()
 	void HostButtonClick();
 	
 	UFUNCTION()

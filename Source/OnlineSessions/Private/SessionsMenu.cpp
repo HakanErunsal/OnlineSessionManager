@@ -52,16 +52,18 @@ bool USessionsMenu::Initialize()
 		return false;
 	}
 
-	//if(Button_Host)
-	//{
-	//	Button_Host->OnClicked.AddDynamic(this, &USessionsMenu::HostButtonClick);
-	//}
+	/* Button click bindings
+	if(Button_Host)
+	{
+		Button_Host->OnClicked.AddDynamic(this, &USessionsMenu::HostButtonClick);
+	}
 
-	//if(Button_Join)
-	//{
-	//	Button_Join->OnClicked.AddDynamic(this, &USessionsMenu::JoinButtonClick);
-	//}
-	
+	if(Button_Join)
+	{
+		Button_Join->OnClicked.AddDynamic(this, &USessionsMenu::JoinButtonClick);
+	}
+	*/
+
 	return true;
 }
 
@@ -72,41 +74,35 @@ void USessionsMenu::NativeDestruct()
 	Super::NativeDestruct();
 }
 
-void USessionsMenu::OnCreateSession(bool bWasSuccessful)
+
+void USessionsMenu::OnCreateSession_Implementation(bool bWasSuccessful)
 {
-	if(bWasSuccessful)
-	{
-		UWorld* World = GetWorld();
-		if(World)
-		{
-			World->ServerTravel("/Game/ThirdPerson/Maps/M_Lobby?listen");
-		}
-	}
+
 }
 
-void USessionsMenu::OnFindSessions(const TArray<FSessionSearchResult>& SearchResults, bool bWasSuccessful)
+void USessionsMenu::OnFindSessions_Implementation(const TArray<FSessionSearchResult>& SearchResults, bool bWasSuccessful)
 {
-	if(OnlineSessionsSubsystem == nullptr)
-	{
-		return;
-	}
+	//if(OnlineSessionsSubsystem == nullptr)
+	//{
+	//	return;
+	//}
 
-	for (auto Result : SearchResults)
-	{
-		FString SettingsValue;
-		Result.SearchResult.Session.SessionSettings.Get(FName("MatchType"), SettingsValue);
-		
-		if(SettingsValue == MatchType)
-		{
-			//OnlineSessionsSubsystem->JoinSession(Result);
-			return;
-		}
-	}
+	//for (auto Result : SearchResults)
+	//{
+	//	FString SettingsValue;
+	//	Result.SearchResult.Session.SessionSettings.Get(FName("MatchType"), SettingsValue);
+	//	
+	//	if(SettingsValue == MatchType)
+	//	{
+	//		//OnlineSessionsSubsystem->JoinSession(Result);
+	//		return;
+	//	}
+	//}
 }
 
-void USessionsMenu::OnJoinSession(EOnlineJoinSessionCompleteResult Result)
+void USessionsMenu::OnJoinSession_Implementation(EOnlineJoinSessionCompleteResult Result)
 {
-	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	/*IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
 	if (Subsystem)
 	{
 		IOnlineSessionPtr SessionInterface = Subsystem->GetSessionInterface();
@@ -121,32 +117,17 @@ void USessionsMenu::OnJoinSession(EOnlineJoinSessionCompleteResult Result)
 				PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
 			}
 		}
-	}
+	}*/
 }
 
-void USessionsMenu::OnDestroySession(bool bWasSuccessful)
+void USessionsMenu::OnDestroySession_Implementation(bool bWasSuccessful)
 {
 }
 
-void USessionsMenu::OnStartSession(bool bWasSuccessful)
+void USessionsMenu::OnStartSession_Implementation(bool bWasSuccessful)
 {
 }
 
-//void USessionsMenu::HostButtonClick()
-//{
-//	if(OnlineSessionsSubsystem)
-//	{
-//		OnlineSessionsSubsystem->CreateSession(NumPublicConnections, MatchType);
-//	}
-//}
-//
-//void USessionsMenu::JoinButtonClick()
-//{
-//	if(OnlineSessionsSubsystem)
-//	{
-//		OnlineSessionsSubsystem->FindSessions(1000);
-//	}
-//}
 
 void USessionsMenu::MenuTearDown()
 {
