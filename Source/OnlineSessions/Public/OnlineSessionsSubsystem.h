@@ -94,4 +94,8 @@ class ONLINESESSIONS_API UOnlineSessionsSubsystem : public UGameInstanceSubsyste
 	
 	FOnStartSessionCompleteDelegate StartSessionCompleteDelegate;
 	FDelegateHandle StartSessionCompleteDelegateHandle;
+
+	bool bCreateSessionOnDestroy{ false };
+	int32 LastNumPublicConnections;
+	FString LastMatchType;
 };

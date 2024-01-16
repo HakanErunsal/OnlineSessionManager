@@ -10,6 +10,8 @@
 /**
  * 
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMenuSetupCompleted, bool, bWasSuccessful);
+
 UCLASS()
 class ONLINESESSIONS_API USessionsMenu : public UUserWidget
 {
@@ -17,7 +19,7 @@ class ONLINESESSIONS_API USessionsMenu : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetupMenu(int32 NumberOfPublicConnections = 4, FString TypeOfMatch = FString(TEXT("FreeForAll")));
+	void SetupMenu(int32 NumberOfPublicConnections = 4, FString TypeOfMatch = FString(TEXT("FreeForAll")), FString LobbyPath = FString(TEXT("/Game/...")));
 
 protected:
 
@@ -42,28 +44,15 @@ protected:
 	UFUNCTION(BlueprintNativeEvent)
 	void OnStartSession(bool bWasSuccessful);
 
+	UPROPERTY(BlueprintAssignable, Category = "Menu")
+	FOnMenuSetupCompleted OnMenuSetupCompleted;
+
 private:
 
 	int32 NumPublicConnections{4};
 	FString MatchType{TEXT("FreeForAll")};
-	
+	FString PathToLobby{ TEXT("")};
 	class UOnlineSessionsSubsystem* OnlineSessionsSubsystem;
-	
-	UPROPERTY(meta = (BindWidget))
-	class UButton* Button_Host;
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* Button_Join;
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* Button_Find;
-
-	/* Button click functions example
-	UFUNCTION()
-	void HostButtonClick();
-	
-	UFUNCTION()
-	void JoinButtonClick();*/
 
 	void MenuTearDown();
 };

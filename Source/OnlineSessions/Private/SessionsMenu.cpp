@@ -7,8 +7,9 @@
 #include "SessionSearchResult.h"
 #include "Components/Button.h"
 
-void USessionsMenu::SetupMenu(int32 NumberOfPublicConnections, FString TypeOfMatch)
+void USessionsMenu::SetupMenu(int32 NumberOfPublicConnections, FString TypeOfMatch, FString LobbyPath)
 {
+	PathToLobby = FString::Printf(TEXT("%s?listen"),*LobbyPath);
 	NumPublicConnections = NumberOfPublicConnections;
 	MatchType = TypeOfMatch;
 	AddToViewport();
@@ -43,6 +44,8 @@ void USessionsMenu::SetupMenu(int32 NumberOfPublicConnections, FString TypeOfMat
 		OnlineSessionsSubsystem->OnlineOnDestroySessionComplete.AddDynamic(this, &ThisClass::OnDestroySession);	
 		OnlineSessionsSubsystem->OnlineOnStartSessionComplete.AddDynamic(this, &ThisClass::OnStartSession);
 	}
+
+	OnMenuSetupCompleted.Broadcast(true);
 }
 
 bool USessionsMenu::Initialize()
@@ -51,19 +54,6 @@ bool USessionsMenu::Initialize()
 	{
 		return false;
 	}
-
-	/* Button click bindings
-	if(Button_Host)
-	{
-		Button_Host->OnClicked.AddDynamic(this, &USessionsMenu::HostButtonClick);
-	}
-
-	if(Button_Join)
-	{
-		Button_Join->OnClicked.AddDynamic(this, &USessionsMenu::JoinButtonClick);
-	}
-	*/
-
 	return true;
 }
 
@@ -77,32 +67,46 @@ void USessionsMenu::NativeDestruct()
 
 void USessionsMenu::OnCreateSession_Implementation(bool bWasSuccessful)
 {
-
+	if (bWasSuccessful)
+	{
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			World->ServerTravel(PathToLobby);
+		}
+	}
+	else
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, FString(TEXT("Failed to create a session!")));
+		}
+	}
 }
 
 void USessionsMenu::OnFindSessions_Implementation(const TArray<FSessionSearchResult>& SearchResults, bool bWasSuccessful)
 {
-	//if(OnlineSessionsSubsystem == nullptr)
-	//{
-	//	return;
-	//}
+	/*if (OnlineSessionsSubsystem == nullptr)
+	{
+		return;
+	}
 
-	//for (auto Result : SearchResults)
-	//{
-	//	FString SettingsValue;
-	//	Result.SearchResult.Session.SessionSettings.Get(FName("MatchType"), SettingsValue);
-	//	
-	//	if(SettingsValue == MatchType)
-	//	{
-	//		//OnlineSessionsSubsystem->JoinSession(Result);
-	//		return;
-	//	}
-	//}
+	for (auto Result : SearchResults)
+	{
+		FString SettingsValue;
+		Result.SearchResult.Session.SessionSettings.Get(FName("MatchType"), SettingsValue);
+		
+		if(SettingsValue == MatchType)
+		{
+			//OnlineSessionsSubsystem->JoinSession(Result);
+			return;
+		}
+	}*/
 }
 
 void USessionsMenu::OnJoinSession_Implementation(EOnlineJoinSessionCompleteResult Result)
 {
-	/*IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
 	if (Subsystem)
 	{
 		IOnlineSessionPtr SessionInterface = Subsystem->GetSessionInterface();
@@ -117,7 +121,7 @@ void USessionsMenu::OnJoinSession_Implementation(EOnlineJoinSessionCompleteResul
 				PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
 			}
 		}
-	}*/
+	}
 }
 
 void USessionsMenu::OnDestroySession_Implementation(bool bWasSuccessful)
